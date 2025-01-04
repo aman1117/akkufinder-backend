@@ -2,6 +2,8 @@ import express from 'express';
 import multer from 'multer';
 import fs from 'fs';
 import { promisify } from 'util';
+const port = process.env.PORT || 4000;
+
 const app = express();
 
 const storage = multer.diskStorage({
@@ -46,6 +48,6 @@ app.get('/files', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log('Server is running on http://localhost:3000');
 });
