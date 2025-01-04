@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import path from 'path';
-
+import fs from 'fs';
+import { promisify } from 'util';
 const app = express();
 
 const storage = multer.diskStorage({
@@ -22,18 +22,27 @@ app.get('/', (req, res) => {
     res.send('akkufinderAPI is running');
 });
 
-// POST endpoint for file upload
 app.post('/upload', upload.single('pdf'), (req, res) => {
     try {
         if (!req.file) {
             res.send('Please upload a file');
         }
         const fileName = req.file.originalname;
-        // const filePath = path.join('uploads', fileName);
         res.send(`File uploaded: ${fileName}`);
 
     } catch (err) {
         console.log(err);
+    }
+});
+
+app.get('/files', async (req, res) => {
+    try {
+        const readdir = promisify(fs.readdir);
+        const files = await readdir('uploads');
+        res.json({ files });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error retrieving files');
     }
 });
 
